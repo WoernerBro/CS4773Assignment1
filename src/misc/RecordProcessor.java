@@ -7,11 +7,11 @@ import java.util.Scanner;
 import java.util.Set;
 
 public class RecordProcessor {
-	private static String [] fileNameArray;
-	private static String [] lineArray;
-	private static int [] a;
-	private static String [] tp;
-	private static double [] py;
+	private static String [] firstName;
+	private static String [] lastName;
+	private static int [] age;
+	private static String [] employeeType;
+	private static double [] payment;
 	
 	public static String processFile(String fileName) {
 		StringBuffer stringBuffer = new StringBuffer();
@@ -31,11 +31,11 @@ public class RecordProcessor {
 				numLines++;
 		}
 
-		fileNameArray = new String[numLines];
-		lineArray = new String[numLines];
-		a = new int[numLines];
-		tp = new String[numLines];
-		py = new double[numLines];
+		firstName = new String[numLines];
+		lastName = new String[numLines];
+		age = new int[numLines];
+		employeeType = new String[numLines];
+		payment = new double[numLines];
 
 		inputFile.close();
 		try {
@@ -47,35 +47,35 @@ public class RecordProcessor {
 
 		numLines = 0;
 		while(inputFile.hasNextLine()) {
-			String l = inputFile.nextLine();
-			if(l.length() > 0) {
+			String line = inputFile.nextLine();
+			if(line.length() > 0) {
 				
-				String [] words = l.split(",");
+				String [] tokens = line.split(",");
 
 				int c2 = 0; 
-				for(;c2 < lineArray.length; c2++) {
-					if(lineArray[c2] == null)
+				for(;c2 < lastName.length; c2++) {
+					if(lastName[c2] == null)
 						break;
 					
-					if(lineArray[c2].compareTo(words[1]) > 0) {
+					if(lastName[c2].compareTo(tokens[1]) > 0) {
 						for(int i = numLines; i > c2; i--) {
-							fileNameArray[i] = fileNameArray[i - 1];
-							lineArray[i] = lineArray[i - 1];
-							a[i] = a[i - 1];
-							tp[i] = tp[i - 1];
-							py[i] = py[i - 1];
+							firstName[i] = firstName[i - 1];
+							lastName[i] = lastName[i - 1];
+							age[i] = age[i - 1];
+							employeeType[i] = employeeType[i - 1];
+							payment[i] = payment[i - 1];
 						}
 						break;
 					}
 				}
 				
-				fileNameArray[c2] = words[0];
-				lineArray[c2] = words[1];
-				tp[c2] = words[3];
+				firstName[c2] = tokens[0];
+				lastName[c2] = tokens[1];
+				employeeType[c2] = tokens[3];
 
 				try {
-					a[c2] = Integer.parseInt(words[2]);
-					py[c2] = Double.parseDouble(words[4]);
+					age[c2] = Integer.parseInt(tokens[2]);
+					payment[c2] = Double.parseDouble(tokens[4]);
 				} catch(Exception e) {
 					System.err.println(e.getMessage());
 					inputFile.close();
@@ -93,7 +93,7 @@ public class RecordProcessor {
 		}
 		
 		//print the rows
-		stringBuffer.append(String.format("# of people imported: %d\n", fileNameArray.length));
+		stringBuffer.append(String.format("# of people imported: %d\n", firstName.length));
 		
 		stringBuffer.append(String.format("\n%-30s %s  %-12s %12s\n", "Person Name", "Age", "Emp. Type", "Pay"));
 		for(int i = 0; i < 30; i++)
@@ -106,9 +106,9 @@ public class RecordProcessor {
 			stringBuffer.append(String.format("-"));
 		stringBuffer.append(String.format("\n"));
 		
-		for(int i = 0; i < fileNameArray.length; i++) {
-			stringBuffer.append(String.format("%-30s %-3d  %-12s $%12.2f\n", fileNameArray[i] + " " + lineArray[i], a[i]
-				, tp[i], py[i]));
+		for(int i = 0; i < firstName.length; i++) {
+			stringBuffer.append(String.format("%-30s %-3d  %-12s $%12.2f\n", firstName[i] + " " + lastName[i], age[i]
+				, employeeType[i], payment[i]));
 		}
 		
 		int sum1 = 0;
@@ -122,20 +122,20 @@ public class RecordProcessor {
 		int c4 = 0;
 		double sum4 = 0;
 		double avg4 = 0;
-		for(int i = 0; i < fileNameArray.length; i++) {
-			sum1 += a[i];
-			if(tp[i].equals("Commission")) {
-				sum2 += py[i];
+		for(int i = 0; i < firstName.length; i++) {
+			sum1 += age[i];
+			if(employeeType[i].equals("Commission")) {
+				sum2 += payment[i];
 				c2++;
-			} else if(tp[i].equals("Hourly")) {
-				sum3 += py[i];
+			} else if(employeeType[i].equals("Hourly")) {
+				sum3 += payment[i];
 				c3++;
-			} else if(tp[i].equals("Salary")) {
-				sum4 += py[i];
+			} else if(employeeType[i].equals("Salary")) {
+				sum4 += payment[i];
 				c4++;
 			}
 		}
-		avg1 = (float) sum1 / fileNameArray.length;
+		avg1 = (float) sum1 / firstName.length;
 		stringBuffer.append(String.format("\nAverage age:         %12.1f\n", avg1));
 		avg2 = sum2 / c2;
 		stringBuffer.append(String.format("Average commission:  $%12.2f\n", avg2));
@@ -146,12 +146,12 @@ public class RecordProcessor {
 		
 		HashMap<String, Integer> hm = new HashMap<String, Integer>();
 		int c1 = 0;
-		for(int i = 0; i < fileNameArray.length; i++) {
-			if(hm.containsKey(fileNameArray[i])) {
-				hm.put(fileNameArray[i], hm.get(fileNameArray[i]) + 1);
+		for(int i = 0; i < firstName.length; i++) {
+			if(hm.containsKey(firstName[i])) {
+				hm.put(firstName[i], hm.get(firstName[i]) + 1);
 				c1++;
 			} else {
-				hm.put(fileNameArray[i], 1);
+				hm.put(firstName[i], 1);
 			}
 		}
 
@@ -169,12 +169,12 @@ public class RecordProcessor {
 
 		HashMap<String, Integer> hm2 = new HashMap<String, Integer>();
 		int c21 = 0;
-		for(int i = 0; i < lineArray.length; i++) {
-			if(hm2.containsKey(lineArray[i])) {
-				hm2.put(lineArray[i], hm2.get(lineArray[i]) + 1);
+		for(int i = 0; i < lastName.length; i++) {
+			if(hm2.containsKey(lastName[i])) {
+				hm2.put(lastName[i], hm2.get(lastName[i]) + 1);
 				c21++;
 			} else {
-				hm2.put(lineArray[i], 1);
+				hm2.put(lastName[i], 1);
 			}
 		}
 
