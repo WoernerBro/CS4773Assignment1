@@ -11,7 +11,7 @@ public class RecordProcessor {
 	private static String [] lastName;
 	private static int [] age;
 	private static String [] employeeType;
-	private static double [] payment;
+	private static double [] pay;
 	
 	public static String processFile(String fileName) {
 		StringBuffer stringBuffer = new StringBuffer();
@@ -35,7 +35,7 @@ public class RecordProcessor {
 		lastName = new String[numLines];
 		age = new int[numLines];
 		employeeType = new String[numLines];
-		payment = new double[numLines];
+		pay = new double[numLines];
 
 		inputFile.close();
 		try {
@@ -63,7 +63,7 @@ public class RecordProcessor {
 							lastName[i] = lastName[i - 1];
 							age[i] = age[i - 1];
 							employeeType[i] = employeeType[i - 1];
-							payment[i] = payment[i - 1];
+							pay[i] = pay[i - 1];
 						}
 						break;
 					}
@@ -75,7 +75,7 @@ public class RecordProcessor {
 
 				try {
 					age[c2] = Integer.parseInt(tokens[2]);
-					payment[c2] = Double.parseDouble(tokens[4]);
+					pay[c2] = Double.parseDouble(tokens[4]);
 				} catch(Exception e) {
 					System.err.println(e.getMessage());
 					inputFile.close();
@@ -108,7 +108,7 @@ public class RecordProcessor {
 		
 		for(int i = 0; i < firstName.length; i++) {
 			stringBuffer.append(String.format("%-30s %-3d  %-12s $%12.2f\n", firstName[i] + " " + lastName[i], age[i]
-				, employeeType[i], payment[i]));
+				, employeeType[i], pay[i]));
 		}
 		
 		int sum1 = 0;
@@ -125,13 +125,13 @@ public class RecordProcessor {
 		for(int i = 0; i < firstName.length; i++) {
 			sum1 += age[i];
 			if(employeeType[i].equals("Commission")) {
-				sum2 += payment[i];
+				sum2 += pay[i];
 				c2++;
 			} else if(employeeType[i].equals("Hourly")) {
-				sum3 += payment[i];
+				sum3 += pay[i];
 				c3++;
 			} else if(employeeType[i].equals("Salary")) {
-				sum4 += payment[i];
+				sum4 += pay[i];
 				c4++;
 			}
 		}
