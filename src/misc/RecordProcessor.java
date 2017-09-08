@@ -111,56 +111,56 @@ public class RecordProcessor {
 				, employeeType[i], pay[i]));
 		}
 		
-		int sum1 = 0;
-		float avg1 = 0f;
-		int c2 = 0;
-		double sum2 = 0;
-		double avg2 = 0;
-		int c3 = 0;
-		double sum3 = 0;
-		double avg3 = 0;
-		int c4 = 0;
-		double sum4 = 0;
-		double avg4 = 0;
+		int sumOfAges = 0;
+		float averageAge = 0f;
+		int numberOfCommissionedEmployees = 0;
+		double sumOfCommissions = 0;
+		double averageCommission = 0;
+		int numberOfHourlyEmployees = 0;
+		double sumOfHourlyWages = 0;
+		double averageHourlyWage = 0;
+		int numberOfSalariedEmployees = 0;
+		double sumOfSalaries = 0;
+		double averageSalary = 0;
 		for(int i = 0; i < firstName.length; i++) {
-			sum1 += age[i];
+			sumOfAges += age[i];
 			if(employeeType[i].equals("Commission")) {
-				sum2 += pay[i];
-				c2++;
+				sumOfCommissions += pay[i];
+				numberOfCommissionedEmployees++;
 			} else if(employeeType[i].equals("Hourly")) {
-				sum3 += pay[i];
-				c3++;
+				sumOfHourlyWages += pay[i];
+				numberOfHourlyEmployees++;
 			} else if(employeeType[i].equals("Salary")) {
-				sum4 += pay[i];
-				c4++;
+				sumOfSalaries += pay[i];
+				numberOfSalariedEmployees++;
 			}
 		}
-		avg1 = (float) sum1 / firstName.length;
-		stringBuffer.append(String.format("\nAverage age:         %12.1f\n", avg1));
-		avg2 = sum2 / c2;
-		stringBuffer.append(String.format("Average commission:  $%12.2f\n", avg2));
-		avg3 = sum3 / c3;
-		stringBuffer.append(String.format("Average hourly wage: $%12.2f\n", avg3));
-		avg4 = sum4 / c4;
-		stringBuffer.append(String.format("Average salary:      $%12.2f\n", avg4));
+		averageAge = (float) sumOfAges / firstName.length;
+		stringBuffer.append(String.format("\nAverage age:         %12.1f\n", averageAge));
+		averageCommission = sumOfCommissions / numberOfCommissionedEmployees;
+		stringBuffer.append(String.format("Average commission:  $%12.2f\n", averageCommission));
+		averageHourlyWage = sumOfHourlyWages / numberOfHourlyEmployees;
+		stringBuffer.append(String.format("Average hourly wage: $%12.2f\n", averageHourlyWage));
+		averageSalary = sumOfSalaries / numberOfSalariedEmployees;
+		stringBuffer.append(String.format("Average salary:      $%12.2f\n", averageSalary));
 		
-		HashMap<String, Integer> hm = new HashMap<String, Integer>();
+		HashMap<String, Integer> hashMap = new HashMap<String, Integer>();
 		int c1 = 0;
 		for(int i = 0; i < firstName.length; i++) {
-			if(hm.containsKey(firstName[i])) {
-				hm.put(firstName[i], hm.get(firstName[i]) + 1);
+			if(hashMap.containsKey(firstName[i])) {
+				hashMap.put(firstName[i], hashMap.get(firstName[i]) + 1);
 				c1++;
 			} else {
-				hm.put(firstName[i], 1);
+				hashMap.put(firstName[i], 1);
 			}
 		}
 
 		stringBuffer.append(String.format("\nFirst names with more than one person sharing it:\n"));
 		if(c1 > 0) {
-			Set<String> set = hm.keySet();
+			Set<String> set = hashMap.keySet();
 			for(String str : set) {
-				if(hm.get(str) > 1) {
-					stringBuffer.append(String.format("%s, # people with this name: %d\n", str, hm.get(str)));
+				if(hashMap.get(str) > 1) {
+					stringBuffer.append(String.format("%s, # people with this name: %d\n", str, hashMap.get(str)));
 				}
 			}
 		} else { 
