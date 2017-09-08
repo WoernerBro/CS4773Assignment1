@@ -26,8 +26,8 @@ public class RecordProcessor {
 		
 		int numberOfRecords = 0;
 		while(inputFile.hasNextLine()) {
-			String line = inputFile.nextLine();
-			if(line.length() > 0)
+			String record = inputFile.nextLine();
+			if(record.length() > 0)
 				numberOfRecords++;
 		}
 
