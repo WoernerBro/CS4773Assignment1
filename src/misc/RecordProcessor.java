@@ -24,18 +24,18 @@ public class RecordProcessor {
 			return null;
 		}
 		
-		int numLines = 0;
+		int numberOfRecords = 0;
 		while(inputFile.hasNextLine()) {
 			String line = inputFile.nextLine();
 			if(line.length() > 0)
-				numLines++;
+				numberOfRecords++;
 		}
 
-		firstName = new String[numLines];
-		lastName = new String[numLines];
-		age = new int[numLines];
-		employeeType = new String[numLines];
-		pay = new double[numLines];
+		firstName = new String[numberOfRecords];
+		lastName = new String[numberOfRecords];
+		age = new int[numberOfRecords];
+		employeeType = new String[numberOfRecords];
+		pay = new double[numberOfRecords];
 
 		inputFile.close();
 		try {
@@ -45,20 +45,20 @@ public class RecordProcessor {
 			return null;
 		}
 
-		numLines = 0;
+		numberOfRecords = 0;
 		while(inputFile.hasNextLine()) {
-			String line = inputFile.nextLine();
-			if(line.length() > 0) {
+			String record = inputFile.nextLine();
+			if(record.length() > 0) {
 				
-				String [] tokens = line.split(",");
+				String [] recordItems = record.split(",");
 
 				int c2 = 0; 
 				for(;c2 < lastName.length; c2++) {
 					if(lastName[c2] == null)
 						break;
 					
-					if(lastName[c2].compareTo(tokens[1]) > 0) {
-						for(int i = numLines; i > c2; i--) {
+					if(lastName[c2].compareTo(recordItems[1]) > 0) {
+						for(int i = numberOfRecords; i > c2; i--) {
 							firstName[i] = firstName[i - 1];
 							lastName[i] = lastName[i - 1];
 							age[i] = age[i - 1];
@@ -69,24 +69,24 @@ public class RecordProcessor {
 					}
 				}
 				
-				firstName[c2] = tokens[0];
-				lastName[c2] = tokens[1];
-				employeeType[c2] = tokens[3];
+				firstName[c2] = recordItems[0];
+				lastName[c2] = recordItems[1];
+				employeeType[c2] = recordItems[3];
 
 				try {
-					age[c2] = Integer.parseInt(tokens[2]);
-					pay[c2] = Double.parseDouble(tokens[4]);
+					age[c2] = Integer.parseInt(recordItems[2]);
+					pay[c2] = Double.parseDouble(recordItems[4]);
 				} catch(Exception e) {
 					System.err.println(e.getMessage());
 					inputFile.close();
 					return null;
 				}
 				
-				numLines++;
+				numberOfRecords++;
 			}
 		}
 		
-		if(numLines == 0) {
+		if(numberOfRecords == 0) {
 			System.err.println("No records found in data file");
 			inputFile.close();
 			return null;
