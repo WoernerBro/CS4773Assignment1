@@ -167,23 +167,23 @@ public class RecordProcessor {
 			stringBuffer.append(String.format("All first names are unique"));
 		}
 
-		HashMap<String, Integer> hm2 = new HashMap<String, Integer>();
+		HashMap<String, Integer> hashMap2 = new HashMap<String, Integer>();
 		int c21 = 0;
 		for(int i = 0; i < lastName.length; i++) {
-			if(hm2.containsKey(lastName[i])) {
-				hm2.put(lastName[i], hm2.get(lastName[i]) + 1);
+			if(hashMap2.containsKey(lastName[i])) {
+				hashMap2.put(lastName[i], hashMap2.get(lastName[i]) + 1);
 				c21++;
 			} else {
-				hm2.put(lastName[i], 1);
+				hashMap2.put(lastName[i], 1);
 			}
 		}
 
 		stringBuffer.append(String.format("\nLast names with more than one person sharing it:\n"));
 		if(c21 > 0) {
-			Set<String> set = hm2.keySet();
+			Set<String> set = hashMap2.keySet();
 			for(String str : set) {
-				if(hm2.get(str) > 1) {
-					stringBuffer.append(String.format("%s, # people with this name: %d\n", str, hm2.get(str)));
+				if(hashMap2.get(str) > 1) {
+					stringBuffer.append(String.format("%s, # people with this name: %d\n", str, hashMap2.get(str)));
 				}
 			}
 		} else { 
