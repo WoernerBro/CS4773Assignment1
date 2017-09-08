@@ -7,60 +7,60 @@ import java.util.Scanner;
 import java.util.Set;
 
 public class RecordProcessor {
-	private static String [] fn;
-	private static String [] ln;
+	private static String [] fileNameArray;
+	private static String [] lineArray;
 	private static int [] a;
 	private static String [] tp;
 	private static double [] py;
 	
-	public static String processFile(String f) {
-		StringBuffer st = new StringBuffer();
+	public static String processFile(String fileName) {
+		StringBuffer stringBuffer = new StringBuffer();
 		
-		Scanner s = null;
+		Scanner inputFile = null;
 		try {
-			s = new Scanner(new File(f));
+			inputFile = new Scanner(new File(fileName));
 		} catch (FileNotFoundException e) {
 			System.err.println(e.getMessage());
 			return null;
 		}
 		
-		int c = 0;
-		while(s.hasNextLine()) {
-			String l = s.nextLine();
-			if(l.length() > 0)
-				c++;
+		int numLines = 0;
+		while(inputFile.hasNextLine()) {
+			String line = inputFile.nextLine();
+			if(line.length() > 0)
+				numLines++;
 		}
 
-		fn = new String[c];
-		ln = new String[c];
-		a = new int[c];
-		tp = new String[c];
-		py = new double[c];
+		fileNameArray = new String[numLines];
+		lineArray = new String[numLines];
+		a = new int[numLines];
+		tp = new String[numLines];
+		py = new double[numLines];
 
-		s.close();
+		inputFile.close();
 		try {
-			s = new Scanner(new File(f));
+			inputFile = new Scanner(new File(fileName));
 		} catch (FileNotFoundException e) {
 			System.err.println(e.getMessage());
 			return null;
 		}
 
-		c = 0;
-		while(s.hasNextLine()) {
-			String l = s.nextLine();
+		numLines = 0;
+		while(inputFile.hasNextLine()) {
+			String l = inputFile.nextLine();
 			if(l.length() > 0) {
 				
 				String [] words = l.split(",");
 
 				int c2 = 0; 
-				for(;c2 < ln.length; c2++) {
-					if(ln[c2] == null)
+				for(;c2 < lineArray.length; c2++) {
+					if(lineArray[c2] == null)
 						break;
 					
-					if(ln[c2].compareTo(words[1]) > 0) {
-						for(int i = c; i > c2; i--) {
-							fn[i] = fn[i - 1];
-							ln[i] = ln[i - 1];
+					if(lineArray[c2].compareTo(words[1]) > 0) {
+						for(int i = numLines; i > c2; i--) {
+							fileNameArray[i] = fileNameArray[i - 1];
+							lineArray[i] = lineArray[i - 1];
 							a[i] = a[i - 1];
 							tp[i] = tp[i - 1];
 							py[i] = py[i - 1];
@@ -69,8 +69,8 @@ public class RecordProcessor {
 					}
 				}
 				
-				fn[c2] = words[0];
-				ln[c2] = words[1];
+				fileNameArray[c2] = words[0];
+				lineArray[c2] = words[1];
 				tp[c2] = words[3];
 
 				try {
@@ -78,36 +78,36 @@ public class RecordProcessor {
 					py[c2] = Double.parseDouble(words[4]);
 				} catch(Exception e) {
 					System.err.println(e.getMessage());
-					s.close();
+					inputFile.close();
 					return null;
 				}
 				
-				c++;
+				numLines++;
 			}
 		}
 		
-		if(c == 0) {
+		if(numLines == 0) {
 			System.err.println("No records found in data file");
-			s.close();
+			inputFile.close();
 			return null;
 		}
 		
 		//print the rows
-		st.append(String.format("# of people imported: %d\n", fn.length));
+		stringBuffer.append(String.format("# of people imported: %d\n", fileNameArray.length));
 		
-		st.append(String.format("\n%-30s %s  %-12s %12s\n", "Person Name", "Age", "Emp. Type", "Pay"));
+		stringBuffer.append(String.format("\n%-30s %s  %-12s %12s\n", "Person Name", "Age", "Emp. Type", "Pay"));
 		for(int i = 0; i < 30; i++)
-			st.append(String.format("-"));
-		st.append(String.format(" ---  "));
+			stringBuffer.append(String.format("-"));
+		stringBuffer.append(String.format(" ---  "));
 		for(int i = 0; i < 12; i++)
-			st.append(String.format("-"));
-		st.append(String.format(" "));
+			stringBuffer.append(String.format("-"));
+		stringBuffer.append(String.format(" "));
 		for(int i = 0; i < 12; i++)
-			st.append(String.format("-"));
-		st.append(String.format("\n"));
+			stringBuffer.append(String.format("-"));
+		stringBuffer.append(String.format("\n"));
 		
-		for(int i = 0; i < fn.length; i++) {
-			st.append(String.format("%-30s %-3d  %-12s $%12.2f\n", fn[i] + " " + ln[i], a[i]
+		for(int i = 0; i < fileNameArray.length; i++) {
+			stringBuffer.append(String.format("%-30s %-3d  %-12s $%12.2f\n", fileNameArray[i] + " " + lineArray[i], a[i]
 				, tp[i], py[i]));
 		}
 		
@@ -122,7 +122,7 @@ public class RecordProcessor {
 		int c4 = 0;
 		double sum4 = 0;
 		double avg4 = 0;
-		for(int i = 0; i < fn.length; i++) {
+		for(int i = 0; i < fileNameArray.length; i++) {
 			sum1 += a[i];
 			if(tp[i].equals("Commission")) {
 				sum2 += py[i];
@@ -135,65 +135,65 @@ public class RecordProcessor {
 				c4++;
 			}
 		}
-		avg1 = (float) sum1 / fn.length;
-		st.append(String.format("\nAverage age:         %12.1f\n", avg1));
+		avg1 = (float) sum1 / fileNameArray.length;
+		stringBuffer.append(String.format("\nAverage age:         %12.1f\n", avg1));
 		avg2 = sum2 / c2;
-		st.append(String.format("Average commission:  $%12.2f\n", avg2));
+		stringBuffer.append(String.format("Average commission:  $%12.2f\n", avg2));
 		avg3 = sum3 / c3;
-		st.append(String.format("Average hourly wage: $%12.2f\n", avg3));
+		stringBuffer.append(String.format("Average hourly wage: $%12.2f\n", avg3));
 		avg4 = sum4 / c4;
-		st.append(String.format("Average salary:      $%12.2f\n", avg4));
+		stringBuffer.append(String.format("Average salary:      $%12.2f\n", avg4));
 		
 		HashMap<String, Integer> hm = new HashMap<String, Integer>();
 		int c1 = 0;
-		for(int i = 0; i < fn.length; i++) {
-			if(hm.containsKey(fn[i])) {
-				hm.put(fn[i], hm.get(fn[i]) + 1);
+		for(int i = 0; i < fileNameArray.length; i++) {
+			if(hm.containsKey(fileNameArray[i])) {
+				hm.put(fileNameArray[i], hm.get(fileNameArray[i]) + 1);
 				c1++;
 			} else {
-				hm.put(fn[i], 1);
+				hm.put(fileNameArray[i], 1);
 			}
 		}
 
-		st.append(String.format("\nFirst names with more than one person sharing it:\n"));
+		stringBuffer.append(String.format("\nFirst names with more than one person sharing it:\n"));
 		if(c1 > 0) {
 			Set<String> set = hm.keySet();
 			for(String str : set) {
 				if(hm.get(str) > 1) {
-					st.append(String.format("%s, # people with this name: %d\n", str, hm.get(str)));
+					stringBuffer.append(String.format("%s, # people with this name: %d\n", str, hm.get(str)));
 				}
 			}
 		} else { 
-			st.append(String.format("All first names are unique"));
+			stringBuffer.append(String.format("All first names are unique"));
 		}
 
 		HashMap<String, Integer> hm2 = new HashMap<String, Integer>();
 		int c21 = 0;
-		for(int i = 0; i < ln.length; i++) {
-			if(hm2.containsKey(ln[i])) {
-				hm2.put(ln[i], hm2.get(ln[i]) + 1);
+		for(int i = 0; i < lineArray.length; i++) {
+			if(hm2.containsKey(lineArray[i])) {
+				hm2.put(lineArray[i], hm2.get(lineArray[i]) + 1);
 				c21++;
 			} else {
-				hm2.put(ln[i], 1);
+				hm2.put(lineArray[i], 1);
 			}
 		}
 
-		st.append(String.format("\nLast names with more than one person sharing it:\n"));
+		stringBuffer.append(String.format("\nLast names with more than one person sharing it:\n"));
 		if(c21 > 0) {
 			Set<String> set = hm2.keySet();
 			for(String str : set) {
 				if(hm2.get(str) > 1) {
-					st.append(String.format("%s, # people with this name: %d\n", str, hm2.get(str)));
+					stringBuffer.append(String.format("%s, # people with this name: %d\n", str, hm2.get(str)));
 				}
 			}
 		} else { 
-			st.append(String.format("All last names are unique"));
+			stringBuffer.append(String.format("All last names are unique"));
 		}
 		
 		//close the file
-		s.close();
+		inputFile.close();
 		
-		return st.toString();
+		return stringBuffer.toString();
 	}
 	
 }
