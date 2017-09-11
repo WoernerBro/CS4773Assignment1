@@ -144,46 +144,46 @@ public class RecordProcessor {
 		averageSalary = sumOfSalaries / numberOfSalariedEmployees;
 		stringBuffer.append(String.format("Average salary:      $%12.2f\n", averageSalary));
 		
-		HashMap<String, Integer> hashMap = new HashMap<String, Integer>();
-		int c1 = 0;
+		HashMap<String, Integer> uniqueFirstNames = new HashMap<String, Integer>();
+		int numberOfUniqueFirstNames = 0;
 		for(int i = 0; i < firstName.length; i++) {
-			if(hashMap.containsKey(firstName[i])) {
-				hashMap.put(firstName[i], hashMap.get(firstName[i]) + 1);
-				c1++;
+			if(uniqueFirstNames.containsKey(firstName[i])) {
+				uniqueFirstNames.put(firstName[i], uniqueFirstNames.get(firstName[i]) + 1);
+				numberOfUniqueFirstNames++;
 			} else {
-				hashMap.put(firstName[i], 1);
+				uniqueFirstNames.put(firstName[i], 1);
 			}
 		}
 
 		stringBuffer.append(String.format("\nFirst names with more than one person sharing it:\n"));
-		if(c1 > 0) {
-			Set<String> set = hashMap.keySet();
-			for(String str : set) {
-				if(hashMap.get(str) > 1) {
-					stringBuffer.append(String.format("%s, # people with this name: %d\n", str, hashMap.get(str)));
+		if(numberOfUniqueFirstNames > 0) {
+			Set<String> setOfUniqueFirstNames = uniqueFirstNames.keySet();
+			for(String firstName : setOfUniqueFirstNames) {
+				if(uniqueFirstNames.get(firstName) > 1) {
+					stringBuffer.append(String.format("%s, # people with this name: %d\n", firstName, uniqueFirstNames.get(firstName)));
 				}
 			}
 		} else { 
 			stringBuffer.append(String.format("All first names are unique"));
 		}
 
-		HashMap<String, Integer> hashMap2 = new HashMap<String, Integer>();
-		int c21 = 0;
+		HashMap<String, Integer> uniqueLastNames = new HashMap<String, Integer>();
+		int numberOfUniqueLastNames = 0;
 		for(int i = 0; i < lastName.length; i++) {
-			if(hashMap2.containsKey(lastName[i])) {
-				hashMap2.put(lastName[i], hashMap2.get(lastName[i]) + 1);
-				c21++;
+			if(uniqueLastNames.containsKey(lastName[i])) {
+				uniqueLastNames.put(lastName[i], uniqueLastNames.get(lastName[i]) + 1);
+				numberOfUniqueLastNames++;
 			} else {
-				hashMap2.put(lastName[i], 1);
+				uniqueLastNames.put(lastName[i], 1);
 			}
 		}
 
 		stringBuffer.append(String.format("\nLast names with more than one person sharing it:\n"));
-		if(c21 > 0) {
-			Set<String> set = hashMap2.keySet();
-			for(String str : set) {
-				if(hashMap2.get(str) > 1) {
-					stringBuffer.append(String.format("%s, # people with this name: %d\n", str, hashMap2.get(str)));
+		if(numberOfUniqueLastNames > 0) {
+			Set<String> setOfUniqueLastNames = uniqueLastNames.keySet();
+			for(String lastName : setOfUniqueLastNames) {
+				if(uniqueLastNames.get(lastName) > 1) {
+					stringBuffer.append(String.format("%s, # people with this name: %d\n", lastName, uniqueLastNames.get(lastName)));
 				}
 			}
 		} else { 
