@@ -52,13 +52,13 @@ public class RecordProcessor {
 				
 				String [] recordItems = record.split(",");
 
-				int c2 = 0; 
-				for(;c2 < lastName.length; c2++) {
-					if(lastName[c2] == null)
+				int j = 0; 
+				for(;j < lastName.length; j++) {
+					if(lastName[j] == null)
 						break;
 					
-					if(lastName[c2].compareTo(recordItems[1]) > 0) {
-						for(int i = numberOfRecords; i > c2; i--) {
+					if(lastName[j].compareTo(recordItems[1]) > 0) {
+						for(int i = numberOfRecords; i > j; i--) {
 							firstName[i] = firstName[i - 1];
 							lastName[i] = lastName[i - 1];
 							age[i] = age[i - 1];
@@ -69,13 +69,13 @@ public class RecordProcessor {
 					}
 				}
 				
-				firstName[c2] = recordItems[0];
-				lastName[c2] = recordItems[1];
-				employeeType[c2] = recordItems[3];
+				firstName[j] = recordItems[0];
+				lastName[j] = recordItems[1];
+				employeeType[j] = recordItems[3];
 
 				try {
-					age[c2] = Integer.parseInt(recordItems[2]);
-					pay[c2] = Double.parseDouble(recordItems[4]);
+					age[j] = Integer.parseInt(recordItems[2]);
+					pay[j] = Double.parseDouble(recordItems[4]);
 				} catch(Exception e) {
 					System.err.println(e.getMessage());
 					inputFile.close();
