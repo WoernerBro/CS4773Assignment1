@@ -157,8 +157,8 @@ public class RecordProcessor {
 
 		stringBuffer.append(String.format("\nFirst names with more than one person sharing it:\n"));
 		if(numberOfUniqueFirstNames > 0) {
-			Set<String> setOfUniqueFirstNames = uniqueFirstNames.keySet();
-			for(String firstName : setOfUniqueFirstNames) {
+			Set<String> allUniqueFirstNames = uniqueFirstNames.keySet();
+			for(String firstName : allUniqueFirstNames) {
 				if(uniqueFirstNames.get(firstName) > 1) {
 					stringBuffer.append(String.format("%s, # people with this name: %d\n", firstName, uniqueFirstNames.get(firstName)));
 				}
@@ -180,8 +180,8 @@ public class RecordProcessor {
 
 		stringBuffer.append(String.format("\nLast names with more than one person sharing it:\n"));
 		if(numberOfUniqueLastNames > 0) {
-			Set<String> setOfUniqueLastNames = uniqueLastNames.keySet();
-			for(String lastName : setOfUniqueLastNames) {
+			Set<String> allUniqueLastNames = uniqueLastNames.keySet();
+			for(String lastName : allUniqueLastNames) {
 				if(uniqueLastNames.get(lastName) > 1) {
 					stringBuffer.append(String.format("%s, # people with this name: %d\n", lastName, uniqueLastNames.get(lastName)));
 				}
