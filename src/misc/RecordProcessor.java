@@ -92,7 +92,28 @@ public class RecordProcessor {
 			return null;
 		}
 		
-		//print the rows
+
+		stringBuffer = printData(stringBuffer);
+		stringBuffer = calculateAverages(stringBuffer);
+
+		stringBuffer = checkForUniqueFirstNames(stringBuffer);
+		
+		stringBuffer = checkForUniqueLastNames(stringBuffer);
+		//close the file
+		inputFile.close();
+		
+		return stringBuffer.toString();
+	}
+
+	public static String readDataFromFile() {
+		
+		
+		return "";
+		
+	}
+	
+	public static StringBuffer printData( StringBuffer stringBuffer) {
+
 		stringBuffer.append(String.format("# of people imported: %d\n", firstName.length));
 		
 		stringBuffer.append(String.format("\n%-30s %s  %-12s %12s\n", "Person Name", "Age", "Emp. Type", "Pay"));
@@ -111,6 +132,10 @@ public class RecordProcessor {
 				, employeeType[i], pay[i]));
 		}
 		
+		return stringBuffer;
+	}
+	
+	public static StringBuffer calculateAverages(StringBuffer stringBuffer) {
 		int sumOfAges = 0;
 		float averageAge = 0f;
 		int numberOfCommissionedEmployees = 0;
@@ -144,6 +169,10 @@ public class RecordProcessor {
 		averageSalary = sumOfSalaries / numberOfSalariedEmployees;
 		stringBuffer.append(String.format("Average salary:      $%12.2f\n", averageSalary));
 		
+		return stringBuffer;
+	}
+	
+	public static StringBuffer checkForUniqueFirstNames(StringBuffer stringBuffer) {
 		HashMap<String, Integer> uniqueFirstNames = new HashMap<String, Integer>();
 		int numberOfUniqueFirstNames = 0;
 		for(int i = 0; i < firstName.length; i++) {
@@ -166,7 +195,11 @@ public class RecordProcessor {
 		} else { 
 			stringBuffer.append(String.format("All first names are unique"));
 		}
-
+		
+		return stringBuffer;
+	}
+	
+	public static StringBuffer checkForUniqueLastNames(StringBuffer stringBuffer) {
 		HashMap<String, Integer> uniqueLastNames = new HashMap<String, Integer>();
 		int numberOfUniqueLastNames = 0;
 		for(int i = 0; i < lastName.length; i++) {
@@ -190,10 +223,8 @@ public class RecordProcessor {
 			stringBuffer.append(String.format("All last names are unique"));
 		}
 		
-		//close the file
-		inputFile.close();
-		
-		return stringBuffer.toString();
+		return stringBuffer;
 	}
+	
 	
 }
