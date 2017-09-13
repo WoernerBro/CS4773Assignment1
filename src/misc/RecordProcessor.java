@@ -23,7 +23,6 @@ public class RecordProcessor {
 		
 		inputFile = openFile(fileName);
 		
-		//	Count number of records
 		int numberOfRecords = 0;
 		while(inputFile.hasNextLine()) {
 			String record = inputFile.nextLine();
@@ -31,58 +30,21 @@ public class RecordProcessor {
 				numberOfRecords++;
 		}
 
-		//	Finish setting up number of records
 		firstName = new String[numberOfRecords];
 		lastName = new String[numberOfRecords];
 		age = new int[numberOfRecords];
 		employeeType = new String[numberOfRecords];
 		pay = new double[numberOfRecords];
 
-		//	Reset where inputFile is reading from to beginning of file
 		inputFile.close();
 		inputFile = openFile(fileName);
 
 		//	Actually adding to arrays
-		numberOfRecords = 0;
 		while(inputFile.hasNextLine()) {
 			String record = inputFile.nextLine();
 			if(record.length() > 0) {
-				
-				//	/SEEMS/ like a natural point to make a method
 				String [] recordItems = record.split(",");
-
-				int j = 0; 
-				for(;j < lastName.length; j++) {
-					if(lastName[j] == null)
-						break;
-					
-					if(lastName[j].compareTo(recordItems[1]) > 0) {
-						for(int i = numberOfRecords; i > j; i--) {
-							firstName[i] = firstName[i - 1];
-							lastName[i] = lastName[i - 1];
-							age[i] = age[i - 1];
-							employeeType[i] = employeeType[i - 1];
-							pay[i] = pay[i - 1];
-						}
-						break;
-					}
-				}
-				
-				//	The next point that /SEEMS/ like a natural point to make a method
-				firstName[j] = recordItems[0];
-				lastName[j] = recordItems[1];
-				employeeType[j] = recordItems[3];
-
-				try {
-					age[j] = Integer.parseInt(recordItems[2]);
-					pay[j] = Double.parseDouble(recordItems[4]);
-				} catch(Exception e) {
-					System.err.println(e.getMessage());
-					inputFile.close();
-					return null;
-				}
-				
-				numberOfRecords++;
+				readRecord(recordItems);
 			}
 		}
 		
@@ -127,6 +89,46 @@ public class RecordProcessor {
 		} catch (FileNotFoundException e) {
 			System.err.println(e.getMessage());
 			return null;
+		}
+	}
+	
+	public static void readRecord(String [] recordItems) {
+		int inputIndex = organizeForInsert(recordItems);
+		insertRecord(recordItems, inputIndex);
+	}
+	
+	public static int organizeForInsert(String[] recordItems) {
+		int inputIndex = 0; 
+		for(;inputIndex < lastName.length; inputIndex++) {
+			if(lastName[inputIndex] == null)
+				break;
+			
+			if(lastName[inputIndex].compareTo(recordItems[1]) > 0) {
+				for(int i = lastName.length; i > inputIndex; i--) {
+					firstName[i] = firstName[i - 1];
+					lastName[i] = lastName[i - 1];
+					age[i] = age[i - 1];
+					employeeType[i] = employeeType[i - 1];
+					pay[i] = pay[i - 1];
+				}
+				break;
+			}
+		}
+		
+		return inputIndex;
+	}
+	
+	public static void insertRecord(String [] recordItems, int inputIndex) {
+		firstName[inputIndex] = recordItems[0];
+		lastName[inputIndex] = recordItems[1];
+		employeeType[inputIndex] = recordItems[3];
+
+		try {
+			age[inputIndex] = Integer.parseInt(recordItems[2]);
+			pay[inputIndex] = Double.parseDouble(recordItems[4]);
+		} catch(Exception e) {
+			System.err.println(e.getMessage());
+			inputFile.close();
 		}
 	}
 	
