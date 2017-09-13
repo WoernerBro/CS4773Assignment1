@@ -148,63 +148,45 @@ public class RecordProcessor {
 		averageSalary = sumOfSalaries / numberOfSalariedEmployees;
 		stringBuffer.append(String.format("Average salary:      $%12.2f\n", averageSalary));
 		
-		//	Finding and counting number of unique first names
-		HashMap<String, Integer> uniqueFirstNames = new HashMap<String, Integer>();
-		int numberOfUniqueFirstNames = 0;
-		for(int i = 0; i < firstName.length; i++) {
-			if(uniqueFirstNames.containsKey(firstName[i])) {
-				uniqueFirstNames.put(firstName[i], uniqueFirstNames.get(firstName[i]) + 1);
-				numberOfUniqueFirstNames++;
-			} else {
-				uniqueFirstNames.put(firstName[i], 1);
-			}
-		}
+		//	Finding and counting number of unique first names, and then printing them
+		stringBuffer.append(findUniqueNames(firstName, "First"));
 
-		//	Printing number of all shared first names
-		stringBuffer.append(String.format("\nFirst names with more than one person sharing it:\n"));
-		if(numberOfUniqueFirstNames > 0) {
-			Set<String> allUniqueFirstNames = uniqueFirstNames.keySet();
-			for(String firstName : allUniqueFirstNames) {
-				if(uniqueFirstNames.get(firstName) > 1) {
-					stringBuffer.append(String.format("%s, # people with this name: %d\n", firstName, uniqueFirstNames.get(firstName)));
-				}
-			}
-		} else { 
-			stringBuffer.append(String.format("All first names are unique"));
-		}
-
-		//	Finding and counting number of unique last names
-		HashMap<String, Integer> uniqueLastNames = new HashMap<String, Integer>();
-		int numberOfUniqueLastNames = 0;
-		for(int i = 0; i < lastName.length; i++) {
-			if(uniqueLastNames.containsKey(lastName[i])) {
-				uniqueLastNames.put(lastName[i], uniqueLastNames.get(lastName[i]) + 1);
-				numberOfUniqueLastNames++;
-			} else {
-				uniqueLastNames.put(lastName[i], 1);
-			}
-		}
-
-		//	Printing number of all shared last names
-		stringBuffer.append(String.format("\nLast names with more than one person sharing it:\n"));
-		if(numberOfUniqueLastNames > 0) {
-			Set<String> allUniqueLastNames = uniqueLastNames.keySet();
-			for(String lastName : allUniqueLastNames) {
-				if(uniqueLastNames.get(lastName) > 1) {
-					stringBuffer.append(String.format("%s, # people with this name: %d\n", lastName, uniqueLastNames.get(lastName)));
-				}
-			}
-		} else { 
-			stringBuffer.append(String.format("All last names are unique"));
-		}
+		//	Finding and counting number of unique first names, and then printing them
+		stringBuffer.append(findUniqueNames(lastName, "Last"));
 		
 		inputFile.close();
 		
 		return stringBuffer.toString();
 	}
 	
-	public static void addRecord() {
+	public static String findUniqueNames(String [] nameArray, String nameType) {
+		String output = "";
 		
+		HashMap<String, Integer> uniqueNames = new HashMap<String, Integer>();
+		
+		int numUniqueNames = 0;
+		for(int i = 0; i < nameArray.length; i++) {
+			if(uniqueNames.containsKey(nameArray[i])) {
+				uniqueNames.put(nameArray[i], uniqueNames.get(nameArray[i]) + 1);
+				numUniqueNames++;
+			} else {
+				uniqueNames.put(nameArray[i], 1);
+			}
+		}
+
+		//	Printing number of all shared first names
+		output += String.format("\n" + nameType + " names with more than one person sharing it:\n");
+		if(numUniqueNames > 0) {
+			Set<String> allUniqueNames = uniqueNames.keySet();
+			for(String name : allUniqueNames) {
+				if(uniqueNames.get(name) > 1) {
+					output += String.format("%s, # people with this name: %d\n", name, uniqueNames.get(name));
+				}
+			}
+		} else { 
+			output += String.format("All " + nameType + " names are unique");
+		}
+		return output;
 	}
 	
 	public static Scanner openFile(String fileName) {
