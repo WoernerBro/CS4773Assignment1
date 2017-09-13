@@ -111,47 +111,9 @@ public class RecordProcessor {
 				, employeeType[i], pay[i]));
 		}
 		
-		int sumOfAges = 0;
-		float averageAge = 0f;
-		int numberOfCommissionedEmployees = 0;
-		double sumOfCommissions = 0;
-		double averageCommission = 0;
-		int numberOfHourlyEmployees = 0;
-		double sumOfHourlyWages = 0;
-		double averageHourlyWage = 0;
-		int numberOfSalariedEmployees = 0;
-		double sumOfSalaries = 0;
-		double averageSalary = 0;
+		stringBuffer.append(printAverages());
 		
-		//	Aggregate sums of numbers
-		for(int i = 0; i < firstName.length; i++) {
-			sumOfAges += age[i];
-			if(employeeType[i].equals("Commission")) {
-				sumOfCommissions += pay[i];
-				numberOfCommissionedEmployees++;
-			} else if(employeeType[i].equals("Hourly")) {
-				sumOfHourlyWages += pay[i];
-				numberOfHourlyEmployees++;
-			} else if(employeeType[i].equals("Salary")) {
-				sumOfSalaries += pay[i];
-				numberOfSalariedEmployees++;
-			}
-		}
-		
-		//	Find and print averages
-		averageAge = (float) sumOfAges / firstName.length;
-		stringBuffer.append(String.format("\nAverage age:         %12.1f\n", averageAge));
-		averageCommission = sumOfCommissions / numberOfCommissionedEmployees;
-		stringBuffer.append(String.format("Average commission:  $%12.2f\n", averageCommission));
-		averageHourlyWage = sumOfHourlyWages / numberOfHourlyEmployees;
-		stringBuffer.append(String.format("Average hourly wage: $%12.2f\n", averageHourlyWage));
-		averageSalary = sumOfSalaries / numberOfSalariedEmployees;
-		stringBuffer.append(String.format("Average salary:      $%12.2f\n", averageSalary));
-		
-		//	Finding and counting number of unique first names, and then printing them
 		stringBuffer.append(findUniqueNames(firstName, "First"));
-
-		//	Finding and counting number of unique first names, and then printing them
 		stringBuffer.append(findUniqueNames(lastName, "Last"));
 		
 		inputFile.close();
@@ -159,9 +121,45 @@ public class RecordProcessor {
 		return stringBuffer.toString();
 	}
 	
-	public static String findUniqueNames(String [] nameArray, String nameType) {
+	public static Scanner openFile(String fileName) {
+		try {
+			return new Scanner(new File(fileName));
+		} catch (FileNotFoundException e) {
+			System.err.println(e.getMessage());
+			return null;
+		}
+	}
+	
+	public static String printAverages() {
 		String output = "";
 		
+		float sumOfAges = 0;
+		
+		for(int i = 0; i < lastName.length; i++)
+			sumOfAges += age[i];
+		
+		output += String.format("\nAverage age:         %12.1f\n", sumOfAges/lastName.length);
+		output += String.format("Average commission:  %12.1f\n", findAverageByEmployeeType("Commission"));
+		output += String.format("Average hourly wage:   %12.1f\n", findAverageByEmployeeType("Hourly"));
+		output += String.format("Average salary:        %12.1f\n", findAverageByEmployeeType("Salary"));
+		
+		return output;
+	}
+	
+	public static double findAverageByEmployeeType(String payType) {
+		double averagePay = 0;
+		int numEmployeeType = 0;
+		for(int i = 0; i < lastName.length; i++)
+			if(employeeType[i].equals(payType)) {
+				averagePay += pay[i];
+				numEmployeeType++;
+			}
+		
+		return averagePay/numEmployeeType;
+	}
+	
+	public static String findUniqueNames(String [] nameArray, String nameType) {
+		String output = "";
 		HashMap<String, Integer> uniqueNames = new HashMap<String, Integer>();
 		
 		int numUniqueNames = 0;
@@ -173,8 +171,7 @@ public class RecordProcessor {
 				uniqueNames.put(nameArray[i], 1);
 			}
 		}
-
-		//	Printing number of all shared first names
+		
 		output += String.format("\n" + nameType + " names with more than one person sharing it:\n");
 		if(numUniqueNames > 0) {
 			Set<String> allUniqueNames = uniqueNames.keySet();
@@ -184,17 +181,8 @@ public class RecordProcessor {
 				}
 			}
 		} else { 
-			output += String.format("All " + nameType + " names are unique");
+			output += String.format("All " + nameType + " names are unique\n");
 		}
 		return output;
-	}
-	
-	public static Scanner openFile(String fileName) {
-		try {
-			return new Scanner(new File(fileName));
-		} catch (FileNotFoundException e) {
-			System.err.println(e.getMessage());
-			return null;
-		}
 	}
 }
