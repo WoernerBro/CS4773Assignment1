@@ -122,6 +122,7 @@ public class RecordProcessor {
 		int numberOfSalariedEmployees = 0;
 		double sumOfSalaries = 0;
 		double averageSalary = 0;
+		
 		for(int i = 0; i < firstName.length; i++) {
 			sumOfAges += age[i];
 			if(employeeType[i].equals("Commission")) {
