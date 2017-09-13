@@ -3,6 +3,6 @@ This assignment took me/us x hours
 List team member names below. If not team member names, grader will assume solo work.
 
 Sean Woerner				2
-Lucas Tiedeman				1
+Lucas Tiedeman				3
 Christian Andrada			
 William Brandon Fisher		
