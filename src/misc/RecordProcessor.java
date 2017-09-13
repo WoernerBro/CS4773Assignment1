@@ -36,7 +36,7 @@ public class RecordProcessor {
 		age = new int[numberOfRecords];
 		employeeType = new String[numberOfRecords];
 		pay = new double[numberOfRecords];
-
+		
 		inputFile.close();
 		try {
 			inputFile = new Scanner(new File(fileName));
