@@ -12,6 +12,8 @@ import misc.RecordProcessor;
 
 public class TestRecordProcessor {
 	private static String expectedFromData1;
+	private static String expectedFromData2;
+	private static String expectedFromData3;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -21,6 +23,8 @@ public class TestRecordProcessor {
 			fileContents.append(fileInput.nextLine() + "\n");
 		expectedFromData1 = fileContents.toString();
 		fileInput.close();
+		expectedFromData2 = null;
+		expectedFromData3 = null;
 	}
 
 	@Test
@@ -30,11 +34,11 @@ public class TestRecordProcessor {
 
 	@Test
 	public void testFileData2() {
-		assertEquals(null, RecordProcessor.processFile("data2.txt"));
+		assertEquals(expectedFromData2, RecordProcessor.processFile("data2.txt"));
 	}
 
 	@Test
 	public void testFileData3() {
-		assertEquals(null, RecordProcessor.processFile("data3.txt"));
+		assertEquals(expectedFromData3, RecordProcessor.processFile("data3.txt"));
 	}
 }

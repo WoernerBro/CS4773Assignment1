@@ -19,11 +19,7 @@ public class RecordProcessor {
 		Scanner inputFile = setInputFile(fileName);
 		int numberOfRecords = getNumberOfRecords(inputFile);
 
-		firstName = new String[numberOfRecords];
-		lastName = new String[numberOfRecords];
-		age = new int[numberOfRecords];
-		employeeType = new String[numberOfRecords];
-		pay = new double[numberOfRecords];
+		initializeRecordItems(numberOfRecords);
 
 		inputFile.close();
 		inputFile = setInputFile(fileName);
@@ -34,28 +30,9 @@ public class RecordProcessor {
 			if(record.length() > 0) {
 				
 				String [] recordItems = record.split(",");
-
-				int j = 0; 
-				for(;j < lastName.length; j++) {
-					if(lastName[j] == null)
-						break;
-					
-					if(lastName[j].compareTo(recordItems[1]) > 0) {
-						for(int i = numberOfRecords; i > j; i--) {
-							firstName[i] = firstName[i - 1];
-							lastName[i] = lastName[i - 1];
-							age[i] = age[i - 1];
-							employeeType[i] = employeeType[i - 1];
-							pay[i] = pay[i - 1];
-						}
-						break;
-					}
-				}
 				
-				firstName[j] = recordItems[0];
-				lastName[j] = recordItems[1];
-				employeeType[j] = recordItems[3];
-
+				int j = setAllRecordItems(0, numberOfRecords, recordItems);
+				
 				try {
 					age[j] = Integer.parseInt(recordItems[2]);
 					pay[j] = Double.parseDouble(recordItems[4]);
@@ -75,7 +52,6 @@ public class RecordProcessor {
 			return null;
 		}
 		
-		//print the rows
 		stringBuffer.append(String.format("# of people imported: %d\n", firstName.length));
 		
 		stringBuffer.append(String.format("\n%-30s %s  %-12s %12s\n", "Person Name", "Age", "Emp. Type", "Pay"));
@@ -173,7 +149,6 @@ public class RecordProcessor {
 			stringBuffer.append(String.format("All last names are unique"));
 		}
 		
-		//close the file
 		inputFile.close();
 		
 		return stringBuffer.toString();
@@ -196,6 +171,42 @@ public class RecordProcessor {
 				numberOfRecords++;
 		}
 		return numberOfRecords;
+	}
+	
+	private static void initializeRecordItems(int numberOfRecords) {
+		firstName = new String[numberOfRecords];
+		lastName = new String[numberOfRecords];
+		age = new int[numberOfRecords];
+		employeeType = new String[numberOfRecords];
+		pay = new double[numberOfRecords];
+	}
+	
+	private static int setAllRecordItems(int j, int numberOfRecords, String [] recordItems) {
+		for(;j < lastName.length; j++) {
+			if(lastName[j] == null)
+				break;
+			
+			if(lastName[j].compareTo(recordItems[1]) > 0) {
+				setRecord(j, numberOfRecords);
+				break;
+			}
+		}
+		
+		firstName[j] = recordItems[0];
+		lastName[j] = recordItems[1];
+		employeeType[j] = recordItems[3];
+
+		return j;
+	}
+	
+	private static void setRecord(int j, int numberOfRecords) {
+		for(int i = numberOfRecords; i > j; i--) {
+			firstName[i] = firstName[i - 1];
+			lastName[i] = lastName[i - 1];
+			age[i] = age[i - 1];
+			employeeType[i] = employeeType[i - 1];
+			pay[i] = pay[i - 1];
+		}
 	}
 	
 }
