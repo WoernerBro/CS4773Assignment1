@@ -14,8 +14,30 @@ public class RecordProcessor {
 	private static double [] pay;
 	
 	public static String processFile(String fileName) {
-		StringBuffer stringBuffer = new StringBuffer();
 		
+		Scanner inputFile = openFile(fileName);
+		int numberOfRecords = countNumberOfRecords(inputFile);
+		initializeValues(numberOfRecords);
+		inputFile.close();
+		inputFile = openFile(fileName);
+		String test;
+		try {
+           test = readNames(inputFile);
+		}  catch(Exception e) {
+			inputFile.close();
+			return null;
+		}
+		if(test == null) {
+			return null;
+		}
+
+		StringBuffer stringBuffer = buildString();
+		inputFile.close();
+		
+		return stringBuffer.toString();
+	}
+
+	public static Scanner openFile(String fileName) {
 		Scanner inputFile = null;
 		try {
 			inputFile = new Scanner(new File(fileName));
@@ -24,28 +46,31 @@ public class RecordProcessor {
 			return null;
 		}
 		
+		return inputFile;
+		
+	}
+	
+	public static int countNumberOfRecords (Scanner inputFile) {
 		int numberOfRecords = 0;
 		while(inputFile.hasNextLine()) {
 			String record = inputFile.nextLine();
 			if(record.length() > 0)
 				numberOfRecords++;
 		}
-
+		
+		return numberOfRecords;
+	}
+	
+	public static void initializeValues (int numberOfRecords) {
 		firstName = new String[numberOfRecords];
 		lastName = new String[numberOfRecords];
 		age = new int[numberOfRecords];
 		employeeType = new String[numberOfRecords];
 		pay = new double[numberOfRecords];
-
-		inputFile.close();
-		try {
-			inputFile = new Scanner(new File(fileName));
-		} catch (FileNotFoundException e) {
-			System.err.println(e.getMessage());
-			return null;
-		}
-
-		numberOfRecords = 0;
+	}
+	
+	public static String readNames( Scanner inputFile) {
+		int numberOfRecords = 0;
 		while(inputFile.hasNextLine()) {
 			String record = inputFile.nextLine();
 			if(record.length() > 0) {
@@ -77,9 +102,7 @@ public class RecordProcessor {
 					age[c2] = Integer.parseInt(recordItems[2]);
 					pay[c2] = Double.parseDouble(recordItems[4]);
 				} catch(Exception e) {
-					System.err.println(e.getMessage());
-					inputFile.close();
-					return null;
+					throw e;
 				}
 				
 				numberOfRecords++;
@@ -92,24 +115,7 @@ public class RecordProcessor {
 			return null;
 		}
 		
-
-		stringBuffer = printData(stringBuffer);
-		stringBuffer = calculateAverages(stringBuffer);
-
-		stringBuffer = checkForUniqueFirstNames(stringBuffer);
-		
-		stringBuffer = checkForUniqueLastNames(stringBuffer);
-		//close the file
-		inputFile.close();
-		
-		return stringBuffer.toString();
-	}
-
-	public static String readDataFromFile() {
-		
-		
-		return "";
-		
+		return "sucess";
 	}
 	
 	public static StringBuffer printData( StringBuffer stringBuffer) {
@@ -136,17 +142,14 @@ public class RecordProcessor {
 	}
 	
 	public static StringBuffer calculateAverages(StringBuffer stringBuffer) {
-		int sumOfAges = 0;
+		int sumOfAges, numberOfHourlyEmployees, numberOfCommissionedEmployees, numberOfSalariedEmployees;
+		sumOfAges = numberOfHourlyEmployees = numberOfCommissionedEmployees = numberOfSalariedEmployees = 0;
 		float averageAge = 0f;
-		int numberOfCommissionedEmployees = 0;
-		double sumOfCommissions = 0;
-		double averageCommission = 0;
-		int numberOfHourlyEmployees = 0;
-		double sumOfHourlyWages = 0;
-		double averageHourlyWage = 0;
-		int numberOfSalariedEmployees = 0;
-		double sumOfSalaries = 0;
-		double averageSalary = 0;
+		double sumOfCommissions, averageCommission, sumOfHourlyWages, averageHourlyWage,
+		sumOfSalaries, averageSalary;
+		sumOfCommissions = averageCommission = sumOfHourlyWages = averageHourlyWage =
+		sumOfSalaries = averageSalary = 0;
+		
 		for(int i = 0; i < firstName.length; i++) {
 			sumOfAges += age[i];
 			if(employeeType[i].equals("Commission")) {
@@ -160,6 +163,7 @@ public class RecordProcessor {
 				numberOfSalariedEmployees++;
 			}
 		}
+		
 		averageAge = (float) sumOfAges / firstName.length;
 		stringBuffer.append(String.format("\nAverage age:         %12.1f\n", averageAge));
 		averageCommission = sumOfCommissions / numberOfCommissionedEmployees;
@@ -226,5 +230,14 @@ public class RecordProcessor {
 		return stringBuffer;
 	}
 	
-	
+	public static StringBuffer buildString () {
+		
+		StringBuffer stringBuffer = new StringBuffer();
+		stringBuffer = printData(stringBuffer);
+		stringBuffer = calculateAverages(stringBuffer);
+		stringBuffer = checkForUniqueFirstNames(stringBuffer);
+		stringBuffer = checkForUniqueLastNames(stringBuffer);
+		
+		return stringBuffer;
+	}
 }
