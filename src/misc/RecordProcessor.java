@@ -12,11 +12,7 @@ public class RecordProcessor {
 	private static int [] age;
 	private static String [] employeeType;
 	private static double [] pay;
-	private static Scanner inputFile;	/*	If you get weird memory stuff when testing,
-										 *	check here, because this was not static before
-										 *	and was declared in String Buffer. Hope it wasn't
-										 *	for a good reason!
-										 */
+	private static Scanner inputFile;
 	
 	public static String processFile(String fileName) {
 		StringBuffer stringBuffer = new StringBuffer();
