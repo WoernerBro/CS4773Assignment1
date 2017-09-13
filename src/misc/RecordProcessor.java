@@ -40,11 +40,41 @@ public class RecordProcessor {
 		inputFile = openFile(fileName);
 
 		//	Actually adding to arrays
+		numberOfRecords = 0;
 		while(inputFile.hasNextLine()) {
 			String record = inputFile.nextLine();
 			if(record.length() > 0) {
+				
+				//	/SEEMS/ like a natural point to make a method
 				String [] recordItems = record.split(",");
-				readRecord(recordItems);
+
+				int j = 0; 
+				for(;j < lastName.length; j++) {
+					if(lastName[j] == null)
+						break;
+					//	Alphabetizing records
+					if(lastName[j].compareTo(recordItems[1]) > 0) {
+						moveRecords(j, numberOfRecords);
+						
+						break;
+					}
+				}
+				
+				//	The next point that /SEEMS/ like a natural point to make a method
+				firstName[j] = recordItems[0];
+				lastName[j] = recordItems[1];
+				employeeType[j] = recordItems[3];
+
+				try {
+					age[j] = Integer.parseInt(recordItems[2]);
+					pay[j] = Double.parseDouble(recordItems[4]);
+				} catch(Exception e) {
+					System.err.println(e.getMessage());
+					inputFile.close();
+					return null;
+				}
+				
+				numberOfRecords++;
 			}
 		}
 		
@@ -92,43 +122,13 @@ public class RecordProcessor {
 		}
 	}
 	
-	public static void readRecord(String [] recordItems) {
-		int inputIndex = organizeForInsert(recordItems);
-		insertRecord(recordItems, inputIndex);
-	}
-	
-	public static int organizeForInsert(String[] recordItems) {
-		int inputIndex = 0; 
-		for(;inputIndex < lastName.length; inputIndex++) {
-			if(lastName[inputIndex] == null)
-				break;
-			
-			if(lastName[inputIndex].compareTo(recordItems[1]) > 0) {
-				for(int i = lastName.length; i > inputIndex; i--) {
-					firstName[i] = firstName[i - 1];
-					lastName[i] = lastName[i - 1];
-					age[i] = age[i - 1];
-					employeeType[i] = employeeType[i - 1];
-					pay[i] = pay[i - 1];
-				}
-				break;
-			}
-		}
-		
-		return inputIndex;
-	}
-	
-	public static void insertRecord(String [] recordItems, int inputIndex) {
-		firstName[inputIndex] = recordItems[0];
-		lastName[inputIndex] = recordItems[1];
-		employeeType[inputIndex] = recordItems[3];
-
-		try {
-			age[inputIndex] = Integer.parseInt(recordItems[2]);
-			pay[inputIndex] = Double.parseDouble(recordItems[4]);
-		} catch(Exception e) {
-			System.err.println(e.getMessage());
-			inputFile.close();
+	public static void moveRecords (int j, int numberOfRecords) {
+		for(int i = numberOfRecords; i > j; i--) {
+			firstName[i] = firstName[i - 1];
+			lastName[i] = lastName[i - 1];
+			age[i] = age[i - 1];
+			employeeType[i] = employeeType[i - 1];
+			pay[i] = pay[i - 1];
 		}
 	}
 	
@@ -141,9 +141,9 @@ public class RecordProcessor {
 			sumOfAges += age[i];
 		
 		output += String.format("\nAverage age:         %12.1f\n", sumOfAges/lastName.length);
-		output += String.format("Average commission:  %12.1f\n", findAverageByEmployeeType("Commission"));
-		output += String.format("Average hourly wage:   %12.1f\n", findAverageByEmployeeType("Hourly"));
-		output += String.format("Average salary:        %12.1f\n", findAverageByEmployeeType("Salary"));
+		output += String.format("Average commission:  $%12.2f\n", findAverageByEmployeeType("Commission"));
+		output += String.format("Average hourly wage: $%12.2f\n", findAverageByEmployeeType("Hourly"));
+		output += String.format("Average salary:      $%12.2f\n", findAverageByEmployeeType("Salary"));
 		
 		return output;
 	}
@@ -157,13 +157,36 @@ public class RecordProcessor {
 				numEmployeeType++;
 			}
 		
-		return averagePay/numEmployeeType;
+		return averagePay/(double)numEmployeeType;
 	}
 	
 	public static String findUniqueNames(String [] nameArray, String nameType) {
 		String output = "";
 		HashMap<String, Integer> uniqueNames = new HashMap<String, Integer>();
 		
+		int numUniqueNames = findNumberOfNames(uniqueNames, nameArray);
+		output += String.format("\n" + nameType + " names with more than one person sharing it:\n");
+		if(numUniqueNames > 0) {
+			output += displayUniqueNames(uniqueNames, numUniqueNames);
+		} else { 
+			output += String.format("All " + nameType + " names are unique\n");
+		}
+		return output;
+	}
+	
+	public static String displayUniqueNames(HashMap<String, Integer> uniqueNames, int numUniqueNames) {
+		String output = "";
+		Set<String> allUniqueNames = uniqueNames.keySet();
+		for(String name : allUniqueNames) {
+			if(uniqueNames.get(name) > 1) {
+				output += String.format("%s, # people with this name: %d\n", name, uniqueNames.get(name));
+			}
+		}
+		
+		return output;
+	}
+	
+	public static int findNumberOfNames(HashMap<String, Integer> uniqueNames, String [] nameArray) {
 		int numUniqueNames = 0;
 		for(int i = 0; i < nameArray.length; i++) {
 			if(uniqueNames.containsKey(nameArray[i])) {
@@ -174,17 +197,6 @@ public class RecordProcessor {
 			}
 		}
 		
-		output += String.format("\n" + nameType + " names with more than one person sharing it:\n");
-		if(numUniqueNames > 0) {
-			Set<String> allUniqueNames = uniqueNames.keySet();
-			for(String name : allUniqueNames) {
-				if(uniqueNames.get(name) > 1) {
-					output += String.format("%s, # people with this name: %d\n", name, uniqueNames.get(name));
-				}
-			}
-		} else { 
-			output += String.format("All " + nameType + " names are unique\n");
-		}
-		return output;
+		return numUniqueNames;
 	}
 }
