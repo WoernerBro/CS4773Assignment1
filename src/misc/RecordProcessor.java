@@ -15,10 +15,7 @@ public class RecordProcessor {
 	private static Scanner inputFile;
 	
 	public static String processFile(String fileName) {
-		StringBuffer stringBuffer = new StringBuffer();
-		
 		inputFile = openFile(fileName);
-		
 		int numberOfRecords = 0;
 		while(inputFile.hasNextLine()) {
 			String record = inputFile.nextLine();
@@ -26,57 +23,30 @@ public class RecordProcessor {
 				numberOfRecords++;
 		}
 
-		firstName = new String[numberOfRecords];
-		lastName = new String[numberOfRecords];
-		age = new int[numberOfRecords];
-		employeeType = new String[numberOfRecords];
-		pay = new double[numberOfRecords];
-
+		initializeRecords(numberOfRecords);
 		inputFile.close();
 		inputFile = openFile(fileName);
-
-		//	Actually adding to arrays
-		numberOfRecords = 0;
-		while(inputFile.hasNextLine()) {
-			String record = inputFile.nextLine();
-			if(record.length() > 0) {
-				processRecord(record, numberOfRecords);
-				numberOfRecords++;
-			}
-		}
+		numberOfRecords = validateRecords();
 		
-		if(numberOfRecords == 0) {
+		if(numberOfRecords <= 0) {
 			System.err.println("No records found in data file");
-			inputFile.close();
-			return null;
+			throw (new IllegalStateException("No records found in data file"));
 		}
 		
-		//print the rows
-		stringBuffer.append(String.format("# of people imported: %d\n", firstName.length));
+		inputFile.close();
 		
-		stringBuffer.append(String.format("\n%-30s %s  %-12s %12s\n", "Person Name", "Age", "Emp. Type", "Pay"));
-		for(int i = 0; i < 30; i++)
-			stringBuffer.append(String.format("-"));
-		stringBuffer.append(String.format(" ---  "));
-		for(int i = 0; i < 12; i++)
-			stringBuffer.append(String.format("-"));
-		stringBuffer.append(String.format(" "));
-		for(int i = 0; i < 12; i++)
-			stringBuffer.append(String.format("-"));
-		stringBuffer.append(String.format("\n"));
-		
-		for(int i = 0; i < firstName.length; i++)
-			stringBuffer.append(String.format("%-30s %-3d  %-12s $%12.2f\n", firstName[i] + " " + lastName[i], age[i]
-				, employeeType[i], pay[i]));
-		
+		return createReport().toString();
+	}
+	
+	public static StringBuffer createReport() {
+		StringBuffer stringBuffer = new StringBuffer();
+
+		stringBuffer.append(printData());
 		stringBuffer.append(printAverages());
-		
 		stringBuffer.append(findUniqueNames(firstName, "First"));
 		stringBuffer.append(findUniqueNames(lastName, "Last"));
 		
-		inputFile.close();
-		
-		return stringBuffer.toString();
+		return stringBuffer;
 	}
 	
 	public static Scanner openFile(String fileName) {
@@ -88,22 +58,31 @@ public class RecordProcessor {
 		}
 	}
 	
+	public static void initializeRecords(int numberOfRecords) {
+		firstName = new String[numberOfRecords];
+		lastName = new String[numberOfRecords];
+		age = new int[numberOfRecords];
+		employeeType = new String[numberOfRecords];
+		pay = new double[numberOfRecords];
+	}
+	
 	public static void processRecord(String record, int numberOfRecords) {
 		String [] recordItems = record.split(",");
 
-		int insertionIndex = 0; 
-		for(;insertionIndex < lastName.length; insertionIndex++) {
-			if(lastName[insertionIndex] == null)
-				break;
-			
-			if(lastName[insertionIndex].compareTo(recordItems[1]) > 0) {
-				moveRecords(insertionIndex, numberOfRecords);
-				break;
-			}
+		int insertionIndex = insertRecord(recordItems, numberOfRecords);
+		
+		firstName[insertionIndex] = recordItems[0];
+		lastName[insertionIndex] = recordItems[1];
+		employeeType[insertionIndex] = recordItems[3];
+
+		try {
+			age[insertionIndex] = Integer.parseInt(recordItems[2]);
+			pay[insertionIndex] = Double.parseDouble(recordItems[4]);
+		} catch(NumberFormatException failureToParseData) {
+			System.err.println("Incorrect age or payment format for entry:\n" + firstName[insertionIndex] + " " + lastName[insertionIndex]);
+			System.err.println(failureToParseData.getMessage());
+			throw(failureToParseData);
 		}
-		
-		insertRecord(recordItems, insertionIndex);
-		
 	}
 	
 	public static void moveRecords(int j, int numberOfRecords) {
@@ -116,18 +95,19 @@ public class RecordProcessor {
 		}
 	}
 	
-	public static void insertRecord(String [] recordItems, int insertionIndex) {
-		firstName[insertionIndex] = recordItems[0];
-		lastName[insertionIndex] = recordItems[1];
-		employeeType[insertionIndex] = recordItems[3];
-
-		try {
-			age[insertionIndex] = Integer.parseInt(recordItems[2]);
-			pay[insertionIndex] = Double.parseDouble(recordItems[4]);
-		} catch(Exception e) {
-			System.err.println(e.getMessage());
-			inputFile.close();
+	public static int insertRecord(String [] recordItems, int numberOfRecords) {
+		int insertionIndex; 
+		for(insertionIndex = 0; insertionIndex < lastName.length; insertionIndex++) {
+			if(lastName[insertionIndex] == null)
+				break;
+			
+			if(lastName[insertionIndex].compareTo(recordItems[1]) > 0) {
+				moveRecords(insertionIndex, numberOfRecords);
+				break;
+			}
 		}
+		
+		return insertionIndex;
 	}
 	
 	public static String printAverages() {
@@ -193,5 +173,48 @@ public class RecordProcessor {
 		}
 		
 		return numUniqueNames;
+	}
+	
+	public static String printData() {
+		String output = "";
+		output += String.format("# of people imported: %d\n", firstName.length);
+		
+		output += String.format("\n%-30s %s  %-12s %12s\n", "Person Name", "Age", "Emp. Type", "Pay");
+		for(int i = 0; i < 30; i++)
+			output += String.format("-");
+			output += String.format(" ---  ");
+		for(int i = 0; i < 12; i++)
+			output += String.format("-");
+		output += String.format(" ");
+		for(int i = 0; i < 12; i++)
+			output += String.format("-");
+		output += String.format("\n");
+		
+		for(int i = 0; i < firstName.length; i++)
+			output += String.format("%-30s %-3d  %-12s $%12.2f\n", firstName[i] + " " + lastName[i], age[i]
+				, employeeType[i], pay[i]);
+		
+		return output;
+	}
+	
+	public static int validateRecords() {
+		int numberOfRecords = 0;
+		
+		while(inputFile.hasNextLine()) {
+			String record = inputFile.nextLine();
+			if(record.length() > 0) {
+				try {
+					processRecord(record, numberOfRecords);
+				}
+				catch (NumberFormatException failureToParseData){
+					inputFile.close();
+					throw(failureToParseData);
+				}
+				
+				numberOfRecords++;
+			}
+		}
+		
+		return numberOfRecords;
 	}
 }

@@ -7,6 +7,8 @@ import java.util.Scanner;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.Rule;
+import org.junit.rules.ExpectedException;
 
 import misc.RecordProcessor;
 
@@ -28,13 +30,18 @@ public class TestRecordProcessor {
 		assertEquals(expectedFromData1, RecordProcessor.processFile("data1.txt"));
 	}
 
+	@Rule
+	public ExpectedException exception = ExpectedException.none();
+	
 	@Test
 	public void testFileData2() {
-		assertEquals(null, RecordProcessor.processFile("data2.txt"));
+		exception.expect(IllegalStateException.class);
+		RecordProcessor.processFile("data2.txt");
 	}
 
 	@Test
 	public void testFileData3() {
-		assertEquals(null, RecordProcessor.processFile("data3.txt"));
+		exception.expect(NumberFormatException.class);
+		RecordProcessor.processFile("data3.txt");
 	}
 }
