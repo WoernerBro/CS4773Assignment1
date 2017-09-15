@@ -30,7 +30,7 @@ public class RecordProcessor {
 		
 		if(numberOfRecords <= 0) {
 			System.err.println("No records found in data file");
-			throw (new IllegalStateException("No records found in data file"));
+			throw (new RuntimeException("No records found in data file"));
 		}
 		
 		inputFile.close();

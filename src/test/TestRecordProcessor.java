@@ -35,7 +35,8 @@ public class TestRecordProcessor {
 	
 	@Test
 	public void testFileData2() {
-		exception.expect(IllegalStateException.class);
+		exception.expect(RuntimeException.class);
+		exception.expectMessage("No records found in data file");
 		RecordProcessor.processFile("data2.txt");
 	}
 
