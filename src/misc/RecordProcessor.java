@@ -15,27 +15,37 @@ public class RecordProcessor {
 	private static Scanner inputFile;
 
 	public static String processFile(String fileName) {
-		inputFile = openFile(fileName);
+		try {
+			inputFile = openFile(fileName);			
+		} catch (FileNotFoundException fileNotFound) {
+			throw new RuntimeException("File Not Found:" + fileName);
+		}
+		
+		int numberOfRecords = getNumberOfRecords();
+		initializeRecords(numberOfRecords);
+		try {
+			inputFile = openFile(fileName);			
+		} catch (FileNotFoundException fileNotFound) {
+			throw new RuntimeException("File Not Found:" + fileName);
+		}
+		
+		numberOfRecords = validateRecords();
+		if(numberOfRecords <= 0) {
+			System.err.println("No records found in data file");
+			throw (new RuntimeException("No records found in data file"));
+		}
+		inputFile.close();
+		return createReport().toString();
+	}
+	
+	public static int getNumberOfRecords() {
 		int numberOfRecords = 0;
 		while(inputFile.hasNextLine()) {
 			String record = inputFile.nextLine();
 			if(record.length() > 0)
 				numberOfRecords++;
 		}
-
-		initializeRecords(numberOfRecords);
-		inputFile.close();
-		inputFile = openFile(fileName);
-		numberOfRecords = validateRecords();
-		
-		if(numberOfRecords <= 0) {
-			System.err.println("No records found in data file");
-			throw (new RuntimeException("No records found in data file"));
-		}
-		
-		inputFile.close();
-		
-		return createReport().toString();
+		return numberOfRecords;
 	}
 	
 	public static StringBuffer createReport() {
@@ -49,12 +59,12 @@ public class RecordProcessor {
 		return stringBuffer;
 	}
 	
-	public static Scanner openFile(String fileName) {
+	public static Scanner openFile(String fileName) throws FileNotFoundException {
 		try {
 			return new Scanner(new File(fileName));
-		} catch (FileNotFoundException e) {
-			System.err.println(e.getMessage());
-			return null;
+		} catch (RuntimeException fileNotFound) {
+			System.err.println("File Not Found:" + fileName);
+			throw fileNotFound;
 		}
 	}
 
@@ -64,6 +74,7 @@ public class RecordProcessor {
 		age = new int[numberOfRecords];
 		employeeType = new String[numberOfRecords];
 		pay = new double[numberOfRecords];
+		inputFile.close();
 	}
 
 	public static void processRecord(String record, int numberOfRecords) {

@@ -3,6 +3,7 @@ package test;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 import org.junit.BeforeClass;
@@ -44,5 +45,11 @@ public class TestRecordProcessor {
 	public void testFileData3() {
 		exception.expect(NumberFormatException.class);
 		RecordProcessor.processFile("data3.txt");
+	}
+	
+	@Test
+	public void testFileNotFound(){
+		exception.expect(RuntimeException.class);
+		RecordProcessor.processFile("data4.txt");
 	}
 }
