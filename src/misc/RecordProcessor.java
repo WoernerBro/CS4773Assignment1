@@ -34,11 +34,7 @@ public class RecordProcessor {
 	
 	private static void readFromFile(String fileName) throws FileNotFoundException {
 		int numberOfRecords = 0;
-		try {
-			inputFile = openFile(fileName);			
-		} catch (FileNotFoundException fileNotFound) {
-			throw new RuntimeException("File Not Found:" + fileName);
-		}
+		inputFile = openFile(fileName);
 		
 		while(inputFile.hasNextLine()) {
 			String record = inputFile.nextLine();
@@ -47,11 +43,7 @@ public class RecordProcessor {
 		}
 		initializeRecords(numberOfRecords);
 		
-		try {
-			inputFile = openFile(fileName);			
-		} catch (FileNotFoundException fileNotFound) {
-			throw new RuntimeException("File Not Found:" + fileName);
-		}
+		inputFile = openFile(fileName);
 	}
 	
 	private static Scanner openFile(String fileName) throws FileNotFoundException {
